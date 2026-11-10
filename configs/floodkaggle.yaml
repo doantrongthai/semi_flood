@@ -1,0 +1,31 @@
+# ==============================================================================
+# FloodKaggle Dataset Specific Benchmark Configuration
+# ==============================================================================
+
+dataset: "floodkaggle"
+description: "Kaggle Flood Area Segmentation (290 high-resolution aerial images)"
+
+seed: 42
+data:
+  size: 256
+  train_split: 0.70       # 203 images
+  val_split: 0.15         # 43 images
+  test_split: 0.15        # 44 images
+  data_root: "data_raw/floodkaggle"
+
+train:
+  epochs: 40
+  batch_size: 4
+  lr: 1.0e-4
+  weight_decay: 0.01
+
+protocol:
+  ratios: [0.10, 0.25, 0.50, 1.00]
+  # 10% = 20 images labeled, 183 unlabeled
+  # 25% = 51 images labeled, 152 unlabeled
+  # 50% = 102 images labeled, 101 unlabeled
+  # 100% = 203 images fully supervised upper bound
+
+loss:
+  unsup_tau: 0.4
+  loss_u_scale: 0.2

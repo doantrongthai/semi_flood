@@ -1,0 +1,34 @@
+{
+  "dataset": "aifloodsense",
+  "method": "unet",
+  "ratio": 0.1,
+  "seed": 42,
+  "epochs": 2,
+  "smoke_test": true,
+  "best_epoch": 1,
+  "best_val_iou": 0.4001922607415769,
+  "training_time_sec": 9.37,
+  "complexity": {
+    "total_params": 17263042,
+    "total_params_m": 17.263,
+    "gflops": 80.381
+  },
+  "test_metrics": {
+    "flood_iou": 0.35918426513617063,
+    "flood_iou_std": 0.12554703836946843,
+    "flood_dice": 0.5159718837323919,
+    "flood_dice_std": 0.1360076713305925,
+    "flood_precision": 0.35918426513617063,
+    "flood_precision_std": 0.12554703836946843,
+    "flood_recall": 0.9999999999951761,
+    "flood_recall_std": 1.6544779057446953e-12,
+    "pixel_accuracy": 0.35918426513671875,
+    "pixel_accuracy_std": 0.12554703836966,
+    "mean_iou_2class": 0.17959213256808532,
+    "mean_iou_2class_std": 0.06277351918473421,
+    "hd95": 100.0,
+    "hd95_std": 0.0,
+    "boundary_f1": 0.0,
+    "boundary_f1_std": 0.0
+  }
+}

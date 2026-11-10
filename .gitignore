@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Caches
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual Environments
+venv/
+env/
+.env
+
+# Raw Datasets (Auto-downloaded via scripts)
+data_raw/
+
+# Model Checkpoints (Uncomment if excluding large weight files from git)
+*.pth
+*.pt
+results/**/*.pth
+results/**/*.pt
+
+# OS / Editor specific
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/

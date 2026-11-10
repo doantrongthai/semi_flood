@@ -1,0 +1,25 @@
+{
+  "best_epoch": 1,
+  "best_val_iou": 0.6077079772939945,
+  "total_train_sec": 9.5,
+  "history": [
+    {
+      "epoch": 1,
+      "step": 1,
+      "loss": 1.4314,
+      "loss_ce": 0.8583,
+      "loss_dice": 0.5732,
+      "val_flood_iou": 0.6077079772939945,
+      "val_flood_dice": 0.7498066183853553
+    },
+    {
+      "epoch": 2,
+      "step": 2,
+      "loss": 1.1521,
+      "loss_ce": 0.6751,
+      "loss_dice": 0.477,
+      "val_flood_iou": 0.6077079772939945,
+      "val_flood_dice": 0.7498066183853553
+    }
+  ]
+}

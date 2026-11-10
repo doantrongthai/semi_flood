@@ -1,0 +1,33 @@
+# ==============================================================================
+# AIFloodSense Dataset Specific Benchmark Configuration
+# ==============================================================================
+
+dataset: "aifloodsense"
+description: "AIFloodSense Global Aerial Imagery Dataset (470 images, arXiv:2512.17432)"
+
+seed: 42
+data:
+  size: 256
+  train_split: 300        # 300 official train images
+  val_split: 76           # 76 official val images
+  test_split: 94          # 94 official test images
+  data_root: "data_raw/aifloodsense"
+  # Binary Mapping Rule: Only mask == 255 is Flood; all other values (0, 85, 170) -> Background
+  flood_pixel_value: 255
+
+train:
+  epochs: 40
+  batch_size: 4
+  lr: 1.0e-4
+  weight_decay: 0.01
+
+protocol:
+  ratios: [0.10, 0.25, 0.50, 1.00]
+  # 10% = 30 images labeled, 270 unlabeled
+  # 25% = 75 images labeled, 225 unlabeled
+  # 50% = 150 images labeled, 150 unlabeled
+  # 100% = 300 images fully supervised upper bound
+
+loss:
+  unsup_tau: 0.4
+  loss_u_scale: 0.2
