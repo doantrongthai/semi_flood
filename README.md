@@ -3,7 +3,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch 2.0+](https://img.shields.io/badge/pytorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Colab Ready](https://colab.research.google.com/assets/colab-badge.svg)](notebooks/colab_benchmark.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/doantrongthai/semi_flood/blob/main/notebooks/colab_benchmark.ipynb)
 
 A rigorous, reproducible semi-supervised segmentation benchmark framework designed for UAV and aerial flood disaster response. Built to Q1 / A* venue standards (*IEEE T-PAMI, IJCV, CVPR, ICCV, NeurIPS, BSPC*).
 
