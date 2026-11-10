@@ -64,11 +64,9 @@ semi_flood_benchmark/
 │   ├── make_figures.py       # Label-efficiency & convergence plotter
 │   └── run_all.sh            # Master batch execution script
 ├── utils/                    # Metrics, boundary Hausdorff HD95, FLOPs profiler
-├── docs/                     # Full benchmark reports & LaTeX templates
-│   ├── BAO_CAO.md            # Comprehensive formal benchmark report (Vietnamese)
-│   ├── BAO_CAO_tables.tex    # LaTeX booktabs table for paper submissions
-│   ├── PLAN.md               # Master execution plan & paper-vs-code discrepancies
-│   └── DECISIONS.md          # Protocol decisions & architectural rationale
+├── docs/                     # Exported LaTeX tables & figures
+│   ├── benchmark_tables.tex  # LaTeX booktabs table for paper submissions
+│   └── figures/              # Generated publication figures
 ├── requirements.txt          # Python dependencies
 └── setup.py                  # Package installer
 ```
@@ -124,7 +122,7 @@ python scripts/make_tables.py
 python scripts/make_figures.py
 ```
 
-Generated LaTeX tables will be saved to `docs/BAO_CAO_tables.tex` and `docs/table_<dataset>.tex`.
+Generated LaTeX tables will be saved to `docs/benchmark_tables.tex` and `docs/table_<dataset>.tex`.
 
 ---
 

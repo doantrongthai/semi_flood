@@ -299,6 +299,18 @@ def main():
     except Exception as e:
         print(f"[Warning] Post-processing encountered an issue: {e}")
 
+    try:
+        import glob
+        from IPython.display import Image, display
+        qual_samples = glob.glob(os.path.join(_REPO_ROOT, "results", "*", "*", "qualitative_test_samples", "*.png"))
+        if qual_samples:
+            print("\n" + "=" * 75)
+            print(f"[Visualization] Displaying test error map preview: {os.path.basename(qual_samples[0])}")
+            print("=" * 75)
+            display(Image(qual_samples[0]))
+    except Exception:
+        pass
+
 
 if __name__ == "__main__":
     main()

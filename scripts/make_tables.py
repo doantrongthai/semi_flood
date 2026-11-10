@@ -148,8 +148,8 @@ def main():
         tex_path = os.path.join(_REPO_ROOT, "docs", f"table_{ds}.tex")
         generate_latex_tables(records, ds, tex_path)
 
-    # Save consolidated LaTeX tables to docs/BAO_CAO_tables.tex
-    generate_latex_tables(records, "floodkaggle", os.path.join(_REPO_ROOT, "docs", "BAO_CAO_tables.tex"))
+    # Save consolidated LaTeX tables to docs/benchmark_tables.tex
+    generate_latex_tables(records, "floodkaggle", os.path.join(_REPO_ROOT, "docs", "benchmark_tables.tex"))
 
 
 if __name__ == "__main__":
