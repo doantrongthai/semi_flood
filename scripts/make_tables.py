@@ -7,20 +7,14 @@ import numpy as np
 
 
 ALL_METHODS = [
-    # Track A: Supervised
-    ("Track A: Supervised", "unet", "U-Net"),
-    ("Track A: Supervised", "mamba_unet", "Mamba-UNet"),
-    # Track B: Semi-Supervised
-    ("Track B: Semi-Supervised", "mean_teacher", "Mean Teacher"),
-    ("Track B: Semi-Supervised", "cross_teaching", "Cross Teaching (CPS)"),
-    ("Track B: Semi-Supervised", "fixmatch", "FixMatch"),
-    ("Track B: Semi-Supervised", "unimatch", "UniMatch"),
-    ("Track B: Semi-Supervised", "unimatchv2", "UniMatch V2"),
-    ("Track B: Semi-Supervised", "semi_mamba_unet", "Semi-Mamba-UNet"),
-    # Track C: Few-Shot
-    ("Track C: Few-Shot", "pfenet", "PFENet"),
-    ("Track C: Few-Shot", "ssp", "SSP"),
-    ("Track C: Few-Shot", "hmnet", "HMNet"),
+    # Supervised Lower/Upper Bound
+    ("Supervised", "unet", "Supervised U-Net"),
+    # Semi-Supervised Baselines
+    ("Semi-Supervised", "mean_teacher", "Mean Teacher"),
+    ("Semi-Supervised", "cross_teaching", "Cross Pseudo Supervision (CPS)"),
+    ("Semi-Supervised", "fixmatch", "FixMatch"),
+    ("Semi-Supervised", "unimatch", "UniMatch"),
+    ("Semi-Supervised", "unimatchv2", "UniMatch V2"),
 ]
 
 RATIOS = [0.10, 0.25, 0.50, 1.00]
