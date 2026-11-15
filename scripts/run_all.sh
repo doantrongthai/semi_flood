@@ -9,7 +9,7 @@ set -e
 DATASETS=("floodkaggle" "aifloodsense")
 RATIOS=(0.10 0.25 0.50 1.00)
 SEEDS=(42 123 456)
-METHODS="unet,mamba_unet,mean_teacher,cross_teaching,cct,classmix,fixmatch,unimatch,unimatchv2,semi_mamba_unet"
+METHODS="unet,mamba_unet,panet,pfenet,mean_teacher,cross_teaching,cct,classmix,fixmatch,unimatch,unimatchv2,semi_mamba_unet"
 
 echo "=============================================================================="
 echo "Starting Full Benchmark Runs across Datasets, Ratios, and Seeds..."

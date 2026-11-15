@@ -10,6 +10,9 @@ ALL_METHODS = [
     # Supervised Lower/Upper Bound
     ("Supervised", "unet", "Supervised U-Net"),
     ("Supervised", "mamba_unet", "Mamba-UNet"),
+    # Few-Shot (1-Shot) Baselines
+    ("Few-Shot (1S)", "panet", "PANet (ICCV 2019)"),
+    ("Few-Shot (1S)", "pfenet", "PFENet (TPAMI 2020)"),
     # Semi-Supervised Baselines
     ("Semi-Supervised", "mean_teacher", "Mean Teacher"),
     ("Semi-Supervised", "cross_teaching", "Cross Pseudo Supervision (CPS)"),
@@ -18,7 +21,7 @@ ALL_METHODS = [
     ("Semi-Supervised", "fixmatch", "FixMatch"),
     ("Semi-Supervised", "unimatch", "UniMatch"),
     ("Semi-Supervised", "unimatchv2", "UniMatch V2"),
-    ("Semi-Supervised", "semi_mamba_unet", "Semi-Mamba-UNet"),
+    ("Hybrid 1S-SSL", "semi_mamba_unet", "Semi-Mamba-UNet (BSPC 2026)"),
 ]
 
 RATIOS = [0.10, 0.25, 0.50, 1.00]
