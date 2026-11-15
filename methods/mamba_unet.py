@@ -38,7 +38,7 @@ def selective_scan_pure_pytorch(
     ys = []
     for i in range(l):
         x = delta_a[:, :, i, :] * x + delta_b_u[:, :, i, :]
-        y = torch.einsum("bdn,bn->bd", x, C[:, :, i])
+        y = torch.bmm(x, C[:, :, i].unsqueeze(-1)).squeeze(-1)
         ys.append(y)
 
     y_out = torch.stack(ys, dim=-1)  # (B, D, L)
