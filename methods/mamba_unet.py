@@ -18,71 +18,7 @@ except (ImportError, ModuleNotFoundError):
 _MAMBA_LOGGED = False
 
 
-def chunked_scan(
-    u: torch.Tensor,
-    delta: torch.Tensor,
-    A: torch.Tensor,
-    B: torch.Tensor,
-    C: torch.Tensor,
-    D: Optional[torch.Tensor] = None,
-    chunk_size: int = 32,
-) -> torch.Tensor:
-    """
-    Numerically stable chunked prefix scan in pure PyTorch.
-    Solves x_t = exp(delta_t * A) * x_{t-1} + delta_t * B_t * u_t in chunks of size K=32.
-    Guarantees zero numerical overflow/underflow in float32 and zero NaN.
-    """
-    b, d, l = u.shape
-    _, n, _ = B.shape
-
-    pad_len = (chunk_size - (l % chunk_size)) % chunk_size
-    if pad_len > 0:
-        u_p = F.pad(u, (0, pad_len))
-        delta_p = F.pad(delta, (0, pad_len))
-        B_p = F.pad(B, (0, pad_len))
-        C_p = F.pad(C, (0, pad_len))
-        l_padded = l + pad_len
-    else:
-        u_p, delta_p, B_p, C_p, l_padded = u, delta, B, C, l
-
-    delta_a = torch.exp(torch.einsum("bdl,dn->bdln", delta_p, A))
-    delta_b_u = torch.einsum("bdl,bnl,bdl->bdln", delta_p, B_p, u_p)
-
-    K = chunk_size
-    n_chunks = l_padded // K
-    da = delta_a.view(b, d, n_chunks, K, n)
-    dbu = delta_b_u.view(b, d, n_chunks, K, n)
-
-    log_da = torch.log(da.clamp(min=1e-12))
-    log_p = torch.cumsum(log_da, dim=3)
-    p = torch.exp(log_p)
-    ratios = dbu * torch.exp(-log_p)
-    cum_ratios = torch.cumsum(ratios, dim=3)
-    x_local = p * cum_ratios
-
-    x_chunks = []
-    prev_state = torch.zeros((b, d, n), device=u.device, dtype=u.dtype)
-    for c in range(n_chunks):
-        x_c = x_local[:, :, c] + prev_state.unsqueeze(2) * p[:, :, c]
-        x_chunks.append(x_c)
-        prev_state = x_c[:, :, -1, :]
-
-    x = torch.cat(x_chunks, dim=2)
-    if pad_len > 0:
-        x = x[:, :, :l, :]
-        u_out = u
-        C_out = C
-    else:
-        u_out = u
-        C_out = C
-
-    y = torch.sum(x * C_out.permute(0, 2, 1).unsqueeze(1), dim=-1)
-    if D is not None:
-        y = y + u_out * D.unsqueeze(-1)
-    return y
-
-
-def selective_scan_fast(
+def selective_scan_cuda(
     u: torch.Tensor,
     delta: torch.Tensor,
     A: torch.Tensor,
@@ -91,37 +27,36 @@ def selective_scan_fast(
     D: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """
-    Optimized selective scan:
-    1. If mamba_ssm is installed and tensor is on CUDA, calls official fused CUDA kernel.
-    2. Otherwise, executes chunked parallel scan (numerically stable, zero loops over L, fast).
+    Direct CUDA selective scan using the official mamba_ssm fused kernel.
+    Strictly requires a CUDA-enabled GPU and compiled mamba_ssm package.
+    Pure PyTorch fallback is deliberately disabled to facilitate immediate debugging.
     """
     global _MAMBA_LOGGED
-    if HAS_MAMBA_CUDA and u.is_cuda:
-        if not _MAMBA_LOGGED:
-            print("[Mamba] >>> ACTIVE BACKEND: Official fused CUDA kernel (mamba_ssm.ops.selective_scan_interface.selective_scan_fn) <<<")
-            _MAMBA_LOGGED = True
-        try:
-            return selective_scan_fn(
-                u.contiguous(),
-                delta.contiguous(),
-                A.float().contiguous(),
-                B.contiguous(),
-                C.contiguous(),
-                D.float().contiguous() if D is not None else None,
-            )
-        except Exception as e:
-            if not _MAMBA_LOGGED:
-                print(f"[Mamba] Warning: CUDA selective_scan_fn failed with error '{e}', falling back to PyTorch scan.")
-                _MAMBA_LOGGED = True
+    if not HAS_MAMBA_CUDA:
+        raise RuntimeError(
+            "\n[Mamba Error] The 'mamba_ssm' CUDA package is not installed or failed to import.\n"
+            "Pure PyTorch fallback is disabled. To resolve, install the official package:\n"
+            "  pip install causal-conv1d mamba-ssm\n"
+        )
+
+    if not u.is_cuda:
+        raise RuntimeError(
+            f"\n[Mamba Error] Selective scan tensor must be on a CUDA device, but received device: '{u.device}'.\n"
+            "Mamba models strictly require CUDA. Verify that you are running on a GPU runtime."
+        )
 
     if not _MAMBA_LOGGED:
-        backend_name = "CUDA (without mamba_ssm wheel)" if u.is_cuda else "CPU"
-        print(f"[Mamba] >>> ACTIVE BACKEND: PyTorch Chunked Parallel Scan ({backend_name}) <<<")
-        if u.is_cuda and not HAS_MAMBA_CUDA:
-            print("[Mamba] Info: To achieve maximum 10,000x speedup on CUDA, install official wheel: pip install causal-conv1d mamba-ssm")
+        print("[Mamba] >>> ACTIVE BACKEND: Official CUDA Fused Kernel (mamba_ssm.ops.selective_scan_interface.selective_scan_fn) <<<")
         _MAMBA_LOGGED = True
 
-    return chunked_scan(u, delta, A, B, C, D, chunk_size=32)
+    return selective_scan_fn(
+        u.contiguous(),
+        delta.contiguous(),
+        A.float().contiguous(),
+        B.contiguous(),
+        C.contiguous(),
+        D.float().contiguous() if D is not None else None,
+    )
 
 
 class VSSBlock(nn.Module):
@@ -184,7 +119,7 @@ class VSSBlock(nn.Module):
             delta = torch.ones_like(u_dir) * 0.05
             B = torch.ones((b, self.d_state, l), device=x.device) * 0.1
             C = torch.ones((b, self.d_state, l), device=x.device) * 0.1
-            y_d = selective_scan_fast(u_dir, delta, A, B, C, self.D)
+            y_d = selective_scan_cuda(u_dir, delta, A, B, C, self.D)
             ys.append(y_d)
 
         # Merge directional outputs
@@ -238,6 +173,12 @@ class MambaUNetModel(nn.Module):
 class MambaUNetMethod(BaseMethod):
     """Supervised baseline using Mamba-UNet backbone."""
     def __init__(self, config: Dict[str, Any], device: torch.device):
+        if device.type != "cuda":
+            raise RuntimeError(
+                f"\n[MambaUNetMethod Error] Device must be 'cuda', got '{device}'.\n"
+                "Mamba-UNet strictly requires a CUDA GPU with 'mamba_ssm' installed. Pure PyTorch fallback is disabled.\n"
+                "Ensure your environment has GPU enabled (e.g., Google Colab T4 GPU runtime)."
+            )
         super().__init__(config, device)
         self.build_model()
 

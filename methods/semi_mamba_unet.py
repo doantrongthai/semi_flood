@@ -45,6 +45,12 @@ class SemiMambaUNetMethod(BaseMethod):
     Semi-Supervised Mamba-UNet baseline equipped with EMA Teacher-Student and ASS Loss.
     """
     def __init__(self, config: Dict[str, Any], device: torch.device):
+        if device.type != "cuda":
+            raise RuntimeError(
+                f"\n[SemiMambaUNetMethod Error] Device must be 'cuda', got '{device}'.\n"
+                "Semi-Mamba-UNet strictly requires a CUDA GPU with 'mamba_ssm' installed. Pure PyTorch fallback is disabled.\n"
+                "Ensure your environment has GPU enabled (e.g., Google Colab T4 GPU runtime)."
+            )
         super().__init__(config, device)
         self.build_model()
 

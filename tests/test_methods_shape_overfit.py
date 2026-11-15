@@ -27,16 +27,32 @@ def test_methods_shape_and_forward():
     print(f"Testing {len(available)} registered methods: {available}")
 
     for m_name in available:
+        if m_name in ["mamba_unet", "semi_mamba_unet"] and not torch.cuda.is_available():
+            print(f"  [SKIP] Method '{m_name}' strictly requires CUDA + mamba_ssm (skipped in CPU test environment).")
+            continue
+
         cls = get_method_class(m_name)
         cfg = {"lr": 1e-3, "weight_decay": 1e-4, "total_steps": 100}
-        method = cls(cfg, device)
+        m_device = torch.device("cuda" if (m_name in ["mamba_unet", "semi_mamba_unet"] and torch.cuda.is_available()) else "cpu")
+        method = cls(cfg, m_device)
+
+        test_img = dummy_img.to(m_device)
+        test_batch_l = (batch_l[0].to(m_device), batch_l[1].to(m_device), batch_l[2])
+        test_batch_u = (
+            batch_u[0].to(m_device),
+            batch_u[1].to(m_device),
+            batch_u[2].to(m_device),
+            batch_u[3].to(m_device),
+            batch_u[4].to(m_device),
+            batch_u[5],
+        )
 
         # 1. Forward shape test
-        out = method.predict(dummy_img)
+        out = method.predict(test_img)
         assert out.shape == (2, 2, 64, 64), f"Method {m_name} output shape {out.shape} != (2, 2, 64, 64)"
 
         # 2. Train step test
-        losses = method.train_step(batch_l, batch_u, step=1)
+        losses = method.train_step(test_batch_l, test_batch_u, step=1)
         assert "loss" in losses, f"Method {m_name} must return 'loss' in train_step output."
         assert not np.isnan(losses["loss"]), f"Method {m_name} produced NaN loss!"
 
