@@ -9,12 +9,14 @@ import numpy as np
 ALL_METHODS = [
     # Supervised Lower/Upper Bound
     ("Supervised", "unet", "Supervised U-Net"),
+    ("Supervised", "mamba_unet", "Mamba-UNet"),
     # Semi-Supervised Baselines
     ("Semi-Supervised", "mean_teacher", "Mean Teacher"),
     ("Semi-Supervised", "cross_teaching", "Cross Pseudo Supervision (CPS)"),
     ("Semi-Supervised", "fixmatch", "FixMatch"),
     ("Semi-Supervised", "unimatch", "UniMatch"),
     ("Semi-Supervised", "unimatchv2", "UniMatch V2"),
+    ("Semi-Supervised", "semi_mamba_unet", "Semi-Mamba-UNet"),
 ]
 
 RATIOS = [0.10, 0.25, 0.50, 1.00]
