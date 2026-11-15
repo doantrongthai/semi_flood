@@ -13,6 +13,8 @@ ALL_METHODS = [
     # Semi-Supervised Baselines
     ("Semi-Supervised", "mean_teacher", "Mean Teacher"),
     ("Semi-Supervised", "cross_teaching", "Cross Pseudo Supervision (CPS)"),
+    ("Semi-Supervised", "cct", "Cross-Consistency Training (CCT)"),
+    ("Semi-Supervised", "classmix", "ClassMix"),
     ("Semi-Supervised", "fixmatch", "FixMatch"),
     ("Semi-Supervised", "unimatch", "UniMatch"),
     ("Semi-Supervised", "unimatchv2", "UniMatch V2"),

@@ -6,6 +6,8 @@ from methods.cross_teaching import CrossTeachingMethod
 from methods.fixmatch import FixMatchMethod
 from methods.unimatch import UniMatchMethod
 from methods.unimatch_v2 import UniMatchV2Method
+from methods.cct import CCTMethod
+from methods.classmix import ClassMixMethod
 from methods.semi_mamba_unet import SemiMambaUNetMethod
 from methods.template_new_method import TemplateNewMethod
 
@@ -20,6 +22,8 @@ __all__ = [
     "FixMatchMethod",
     "UniMatchMethod",
     "UniMatchV2Method",
+    "CCTMethod",
+    "ClassMixMethod",
     "SemiMambaUNetMethod",
     "TemplateNewMethod",
 ]
